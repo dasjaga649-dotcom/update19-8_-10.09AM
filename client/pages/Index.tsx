@@ -1680,9 +1680,9 @@ export default function Index() {
                                 processed.extractedImages &&
                                 processed.extractedImages.length > 0 && (
                                   <AutoImageSlideshow
-                                    images={processed.extractedImages.map((url, index) => ({
-                                      url: url,
-                                      title: `Image ${index + 1}`,
+                                    images={processed.extractedImages.map((img) => ({
+                                      url: img.url,
+                                      title: img.alt || 'Image',
                                     }))}
                                   />
                                 )}
