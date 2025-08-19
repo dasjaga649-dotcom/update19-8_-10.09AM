@@ -227,7 +227,7 @@ export const StackedImageCarousel = ({
 
         {/* Pagination dots */}
         <div className="flex justify-center gap-3 mt-3">
-          {content.map((_, index) => (
+          {normalizedItems.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
