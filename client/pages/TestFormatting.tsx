@@ -188,13 +188,15 @@ Visit our [documentation](https://docs.example.com) to learn more.
         }`}>
           <h3 className="font-semibold mb-2">Testing Results:</h3>
           <ul className="list-disc ml-6 space-y-1 text-sm">
-            <li>✅ Markdown lists and bold text formatting</li>
+            <li>✅ Markdown text links render as clickable text (no raw symbols)</li>
+            <li>✅ Markdown image links render as actual images</li>
+            <li>✅ Modern file download components with icons and hover effects</li>
             <li>✅ HTML sanitization and safe rendering</li>
-            <li>✅ Image extraction and display</li>
-            <li>✅ Link processing with proper attributes</li>
-            <li>✅ Mixed HTML and Markdown content</li>
+            <li>✅ Link processing with proper security attributes</li>
+            <li>✅ Mixed HTML and Markdown content support</li>
             <li>✅ Dark mode styling support</li>
             <li>✅ Responsive design and overflow handling</li>
+            <li>✅ Clean title processing for file links</li>
           </ul>
         </div>
       </div>
