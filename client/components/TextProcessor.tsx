@@ -98,14 +98,14 @@ export const processContent = (content: string, isDarkMode: boolean = false): Pr
   } else {
     // Use ReactMarkdown for markdown content
     formattedContent = (
-      <ReactMarkdown
-        className={`prose max-w-none ${isDarkMode ? 'prose-invert' : ''} ${
-          isDarkMode 
-            ? 'text-gray-100 [&_strong]:text-white [&_b]:text-white [&_h1]:text-white [&_h2]:text-white [&_h3]:text-white [&_h4]:text-white [&_h5]:text-white [&_h6]:text-white [&_a]:text-blue-400 [&_a:hover]:text-blue-300' 
+      <div className={`prose max-w-none ${isDarkMode ? 'prose-invert' : ''} ${
+          isDarkMode
+            ? 'text-gray-100 [&_strong]:text-white [&_b]:text-white [&_h1]:text-white [&_h2]:text-white [&_h3]:text-white [&_h4]:text-white [&_h5]:text-white [&_h6]:text-white [&_a]:text-blue-400 [&_a:hover]:text-blue-300'
             : 'text-gray-700 [&_strong]:text-gray-900 [&_b]:text-gray-900 [&_h1]:text-gray-900 [&_h2]:text-gray-900 [&_h3]:text-gray-900 [&_h4]:text-gray-900 [&_h5]:text-gray-900 [&_h6]:text-gray-900 [&_a]:text-blue-600 [&_a:hover]:text-blue-800'
-        } [&_ul]:list-disc [&_ol]:list-decimal [&_li]:ml-4 [&_a]:underline [&_a]:font-medium break-words overflow-wrap-anywhere`}
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeSanitize]}
+        } [&_ul]:list-disc [&_ol]:list-decimal [&_li]:ml-4 [&_a]:underline [&_a]:font-medium break-words overflow-wrap-anywhere`}>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeSanitize]}
         components={{
           // Custom link component
           a: ({ href, children, ...props }) => (
@@ -199,7 +199,8 @@ export const processContent = (content: string, isDarkMode: boolean = false): Pr
         }}
       >
         {processedContent}
-      </ReactMarkdown>
+        </ReactMarkdown>
+      </div>
     );
   }
 
