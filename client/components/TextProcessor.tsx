@@ -12,7 +12,7 @@ interface TextProcessorProps {
 
 interface ProcessedContent {
   formattedContent: React.ReactElement;
-  extractedImages: string[];
+  extractedImages: Array<{ url: string; alt: string }>;
   extractedLinks: Array<{ title: string; url: string }>;
 }
 
@@ -31,22 +31,29 @@ export const TextProcessor: React.FC<TextProcessorProps> = ({
 };
 
 export const processContent = (content: string, isDarkMode: boolean = false): ProcessedContent => {
-  const extractedImages: string[] = [];
+  const extractedImages: Array<{ url: string; alt: string }> = [];
   const extractedLinks: Array<{ title: string; url: string }> = [];
 
-  // Extract images first
+  // Extract images first with alt text
   const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
   let imageMatch;
   while ((imageMatch = imageRegex.exec(content)) !== null) {
-    extractedImages.push(imageMatch[2]);
+    extractedImages.push({
+      url: imageMatch[2],
+      alt: imageMatch[1] || 'Image'
+    });
   }
 
   // Extract regular image URLs
   const urlImageRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|svg)(?:\?[^\s]*)?)/gi;
   let urlImageMatch;
   while ((urlImageMatch = urlImageRegex.exec(content)) !== null) {
-    if (!extractedImages.includes(urlImageMatch[1])) {
-      extractedImages.push(urlImageMatch[1]);
+    const imageUrl = urlImageMatch[1];
+    if (!extractedImages.some(img => img.url === imageUrl)) {
+      extractedImages.push({
+        url: imageUrl,
+        alt: 'Image'
+      });
     }
   }
 
@@ -63,10 +70,10 @@ export const processContent = (content: string, isDarkMode: boolean = false): Pr
 
   // Remove extracted images from content to avoid duplicate rendering
   let processedContent = content.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '');
-  
+
   // Remove standalone image URLs that we've extracted
   extractedImages.forEach(img => {
-    processedContent = processedContent.replace(new RegExp(img.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '');
+    processedContent = processedContent.replace(new RegExp(img.url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '');
   });
 
   // Clean up extra whitespace
