@@ -123,6 +123,9 @@ Visit our [documentation](https://docs.example.com) to learn more.
           </div>
         </header>
 
+        {/* Markdown Link Test */}
+        <MarkdownTestComponent isDarkMode={darkMode} />
+
         <div className="space-y-8">
           {testPatterns.map((pattern, index) => (
             <div 
