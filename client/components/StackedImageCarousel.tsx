@@ -7,8 +7,17 @@ interface RelatedContent {
   url: string;
 }
 
+interface ImageContent {
+  url: string;
+  alt: string;
+}
+
+// Union type to support both formats
+type CarouselItem = RelatedContent | ImageContent;
+
 interface StackedImageCarouselProps {
-  content: RelatedContent[];
+  content?: RelatedContent[];
+  images?: ImageContent[];
   isDarkMode?: boolean;
 }
 
