@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextProcessor } from '../components/TextProcessor';
 import { Button } from '../components/ui/button';
+import { MarkdownTestComponent } from '../components/MarkdownTestComponent';
 
 const TestFormatting: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
