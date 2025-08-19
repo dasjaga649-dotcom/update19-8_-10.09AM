@@ -1633,7 +1633,7 @@ export default function Index() {
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div
-                  className={`${message.type === "user" ? "max-w-xs ml-auto" : "max-w-2xl mr-auto"} ${message.type === "user" ? "bg-gray-200 text-gray-800 rounded-2xl rounded-br-md p-4" : "bg-transparent text-gray-900 p-2"}`}
+                  className={`${message.type === "user" ? "max-w-xs ml-auto" : "max-w-lg mr-auto"} ${message.type === "user" ? "bg-gray-200 text-gray-800 rounded-2xl rounded-br-md p-4" : "bg-transparent text-gray-900 p-2"}`}
                 >
                   {message.type === "user" ? (
                     <p className="text-sm">{message.content}</p>
