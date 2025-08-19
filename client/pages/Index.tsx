@@ -1656,92 +1656,37 @@ export default function Index() {
                             );
                           }
 
-                          // Show complete message
+                          // Show complete message using TextProcessor
                           const answer = message.response?.answer || "";
+                          const processed = processContent(answer, darkMode);
 
-                          // Check if answer contains HTML tags
-                          const hasHTMLTags = /<[^>]+>/.test(answer);
-
-                          if (hasHTMLTags) {
-                            // Render HTML content safely
-                            return (
+                          return (
+                            <div className="space-y-4">
+                              {/* Display main content using TextProcessor */}
                               <div className="max-w-full break-words">
-                                {renderHTMLContent(answer, darkMode)}
+                                <TextProcessor
+                                  content={answer}
+                                  isDarkMode={darkMode}
+                                  className="prose-sm leading-relaxed"
+                                />
                               </div>
-                            );
-                          } else {
-                            // Check if answer contains bullet points first
-                            const hasBulletPointsInAnswer = hasBulletPoints(answer);
-                            const hasMarkdownLinksinAnswer =
-                              hasMarkdownLinks(answer);
 
-                            if (hasBulletPointsInAnswer) {
-                              // Process as text with bullet points
-                              const formatted = formatAnswerText(answer, darkMode);
-                              return (
-                                <div>
-                                  <div className={`prose-sm leading-relaxed max-w-full break-words ${
-                                    darkMode ? "text-gray-100" : "text-gray-900"
-                                  }`}>
-                                    {formatted.formattedText}
-                                  </div>
-                                  {/* Display slideshow for extracted images - always show if available */}
-                                  {(showImages[message.id] ||
-                                    (typingMessageId !== message.id &&
-                                      typingMessageId !== null) ||
-                                    typingMessageId === null) &&
-                                    formatted.slideshowImages &&
-                                    formatted.slideshowImages.length > 0 && (
-                                    <AutoImageSlideshow images={formatted.slideshowImages} />
-                                  )}
-                                </div>
-                              );
-                            } else if (hasMarkdownLinksinAnswer) {
-                              // Parse and render markdown links
-                              const parsedContent = parseMarkdownLinks(answer);
-                              return (
-                                <div
-                                  className={`prose-sm leading-relaxed max-w-full break-words ${
-                                    darkMode ? "text-gray-100" : "text-gray-900"
-                                  }`}
-                                >
-                                  {parsedContent.map((part, index) => (
-                                    <span key={index}>{part}</span>
-                                  ))}
-                                </div>
-                              );
-                            } else {
-                              // Process as regular markdown/plain text
-                              const formatted = formatAnswerText(
-                                answer,
-                                darkMode,
-                              );
-                              return (
-                                <div>
-                                  <div
-                                    className={`prose-sm leading-relaxed max-w-full break-words ${
-                                      darkMode
-                                        ? "text-gray-100"
-                                        : "text-gray-900"
-                                    }`}
-                                  >
-                                    {formatted.formattedText}
-                                  </div>
-                                  {/* Display slideshow for extracted images - always show if available */}
-                                  {(showImages[message.id] ||
-                                    (typingMessageId !== message.id &&
-                                      typingMessageId !== null) ||
-                                    typingMessageId === null) &&
-                                    formatted.slideshowImages &&
-                                    formatted.slideshowImages.length > 0 && (
-                                      <AutoImageSlideshow
-                                        images={formatted.slideshowImages}
-                                      />
-                                    )}
-                                </div>
-                              );
-                            }
-                          }
+                              {/* Display slideshow for extracted images - always show if available */}
+                              {(showImages[message.id] ||
+                                (typingMessageId !== message.id &&
+                                  typingMessageId !== null) ||
+                                typingMessageId === null) &&
+                                processed.extractedImages &&
+                                processed.extractedImages.length > 0 && (
+                                  <AutoImageSlideshow
+                                    images={processed.extractedImages.map((url, index) => ({
+                                      url: url,
+                                      title: `Image ${index + 1}`,
+                                    }))}
+                                  />
+                                )}
+                            </div>
+                          );
                         })()}
                       </div>
 
