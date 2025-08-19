@@ -1679,11 +1679,9 @@ export default function Index() {
                                 typingMessageId === null) &&
                                 processed.extractedImages &&
                                 processed.extractedImages.length > 0 && (
-                                  <AutoImageSlideshow
-                                    images={processed.extractedImages.map((img) => ({
-                                      url: img.url,
-                                      title: img.alt || 'Image',
-                                    }))}
+                                  <StackedImageCarousel
+                                    images={processed.extractedImages}
+                                    isDarkMode={darkMode}
                                   />
                                 )}
                             </div>
