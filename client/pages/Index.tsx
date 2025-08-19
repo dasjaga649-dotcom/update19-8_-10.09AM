@@ -18,7 +18,7 @@ import { StackedImageCarousel } from "../components/StackedImageCarousel";
 import { HorizontalScrollableCards } from "../components/HorizontalScrollableCards";
 import { AutoImageSlideshow } from "../components/AutoImageSlideshow";
 import { Recommendations } from "../components/Recommendations";
-import { parseMarkdownLinks, hasMarkdownLinks, hasBulletPoints } from "../lib/markdownUtils";
+import { TextProcessor, processContent } from "../components/TextProcessor";
 
 // Type definitions for the backend response
 interface RelatedContent {
