@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TextProcessor } from '../components/TextProcessor';
 import { Button } from '../components/ui/button';
 import { MarkdownTestComponent } from '../components/MarkdownTestComponent';
+import { ImageTestComponent } from '../components/ImageTestComponent';
 
 const TestFormatting: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
