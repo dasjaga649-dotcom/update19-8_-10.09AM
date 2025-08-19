@@ -23,11 +23,33 @@ interface StackedImageCarouselProps {
 
 export const StackedImageCarousel = ({
   content,
+  images,
   isDarkMode = false,
 }: StackedImageCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  if (content.length === 0) return null;
+  // Normalize data to work with both formats
+  const normalizedItems: Array<{src: string, title: string, url?: string}> = React.useMemo(() => {
+    if (images) {
+      return images.map(img => ({
+        src: img.url,
+        title: img.alt || 'Image',
+        url: undefined // Images from markdown don't have clickable URLs
+      }));
+    }
+
+    if (content) {
+      return content.map(item => ({
+        src: item.image,
+        title: item.title,
+        url: item.url
+      }));
+    }
+
+    return [];
+  }, [content, images]);
+
+  if (normalizedItems.length === 0) return null;
 
   const nextContent = () => {
     setCurrentIndex((prev) => (prev + 1) % content.length);
