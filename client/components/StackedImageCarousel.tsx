@@ -158,29 +158,51 @@ export const StackedImageCarousel = ({
                 }}
                 onClick={() => handleImageClick(index)}
               >
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 ${isActive ? "shadow-xl ring-2 ring-blue-400" : "shadow-md hover:shadow-lg"}`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <img
-                    src={
-                      item.image ||
-                      "https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
-                    }
-                    alt={item.title}
-                    className="w-full h-28 object-cover bg-gray-100"
-                  />
-                  <div className="p-2 bg-white/90 backdrop-blur-sm">
-                    <h5
-                      className={`font-medium text-xs hover:text-blue-600 cursor-pointer line-clamp-1 text-center ${isDarkMode ? "text-gray-800" : "text-gray-800"}`}
-                    >
-                      {item.title}
-                    </h5>
+                {item.url ? (
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 ${isActive ? "shadow-xl ring-2 ring-blue-400" : "shadow-md hover:shadow-lg"}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <img
+                      src={
+                        item.src ||
+                        "https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
+                      }
+                      alt={item.title}
+                      className="w-full h-28 object-cover bg-gray-100"
+                    />
+                    <div className="p-2 bg-white/90 backdrop-blur-sm">
+                      <h5
+                        className={`font-medium text-xs hover:text-blue-600 cursor-pointer line-clamp-1 text-center ${isDarkMode ? "text-gray-800" : "text-gray-800"}`}
+                      >
+                        {item.title}
+                      </h5>
+                    </div>
+                  </a>
+                ) : (
+                  <div
+                    className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden transition-all duration-300 ${isActive ? "shadow-xl ring-2 ring-blue-400" : "shadow-md"}`}
+                  >
+                    <img
+                      src={
+                        item.src ||
+                        "https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
+                      }
+                      alt={item.title}
+                      className="w-full h-28 object-cover bg-gray-100"
+                    />
+                    <div className="p-2 bg-white/90 backdrop-blur-sm">
+                      <h5
+                        className={`font-medium text-xs line-clamp-1 text-center ${isDarkMode ? "text-gray-800" : "text-gray-800"}`}
+                      >
+                        {item.title}
+                      </h5>
+                    </div>
                   </div>
-                </a>
+                )}
               </div>
             );
           })}
