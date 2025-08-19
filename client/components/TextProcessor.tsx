@@ -119,6 +119,16 @@ export const processContent = (content: string, isDarkMode: boolean = false): Pr
               {children}
             </a>
           ),
+          // Custom image component
+          img: ({ src, alt, ...props }) => (
+            <img
+              src={src}
+              alt={alt || 'Image'}
+              className="max-w-full h-auto rounded-lg border border-gray-200 shadow-sm my-2"
+              loading="lazy"
+              {...props}
+            />
+          ),
           // Custom list styling
           ul: ({ children, ...props }) => (
             <ul className="list-disc ml-6 space-y-1 break-words" {...props}>
