@@ -19,6 +19,7 @@ import { HorizontalScrollableCards } from "../components/HorizontalScrollableCar
 import { AutoImageSlideshow } from "../components/AutoImageSlideshow";
 import { Recommendations } from "../components/Recommendations";
 import { TextProcessor, processContent } from "../components/TextProcessor";
+import { ModernFileLinks } from "../components/ModernFileLinks";
 
 // Type definitions for the backend response
 interface RelatedContent {
