@@ -109,11 +109,11 @@ export const StackedImageCarousel = ({
       <div className="relative w-full max-w-md p-4 rounded-lg">
         {/* Carousel container with centered layout */}
         <div className="relative h-48 flex items-center justify-center perspective-1000">
-          {content.map((item, index) => {
+          {normalizedItems.map((item, index) => {
             const isActive = index === currentIndex;
             const isPrev =
-              index === (currentIndex - 1 + content.length) % content.length;
-            const isNext = index === (currentIndex + 1) % content.length;
+              index === (currentIndex - 1 + normalizedItems.length) % normalizedItems.length;
+            const isNext = index === (currentIndex + 1) % normalizedItems.length;
 
             let transformStyle = "";
             let opacityValue = 0;
