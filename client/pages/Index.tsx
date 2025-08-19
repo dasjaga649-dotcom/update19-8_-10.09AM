@@ -1704,58 +1704,17 @@ export default function Index() {
                           />
                         )}
 
-                      {/* 3. FILE LINKS SECTION - Small vertical cards */}
+                      {/* 3. FILE LINKS SECTION - Modern download cards */}
                       {(showImages[message.id] ||
                         (typingMessageId !== message.id &&
                           typingMessageId !== null) ||
                         typingMessageId === null) &&
                         message.response?.file_links &&
                         message.response.file_links.length > 0 && (
-                          <div className="mt-4 max-h-40 overflow-y-auto scrollbar-hide">
-                            <div className="space-y-2">
-                              {message.response.file_links
-                                .filter(
-                                  (link) =>
-                                    link &&
-                                    (typeof link === "string" ||
-                                      (typeof link === "object" && link.url)),
-                                )
-                                .map((link, index) => {
-                                  // Handle both old format (string) and new format (object with title and url)
-                                  const href =
-                                    typeof link === "string" ? link : link.url;
-                                  const title =
-                                    typeof link === "string"
-                                      ? link.split("/").pop() ||
-                                        `File ${index + 1}`
-                                      : link.title;
-
-                                  return (
-                                    <a
-                                      key={index}
-                                      href={href}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className={`block p-3 rounded-lg border transition-all duration-200 hover:shadow-md cursor-pointer ${
-                                        darkMode
-                                          ? "bg-gray-800 border-gray-600 hover:border-gray-500 hover:bg-gray-700"
-                                          : "bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
-                                      }`}
-                                    >
-                                      <span
-                                        className={`text-sm font-medium ${
-                                          darkMode
-                                            ? "text-gray-200 hover:text-blue-400"
-                                            : "text-gray-700 hover:text-blue-600"
-                                        }`}
-                                      >
-                                        {title}
-                                      </span>
-                                    </a>
-                                  );
-                                })}
-                            </div>
-                          </div>
+                          <ModernFileLinks
+                            fileLinks={message.response.file_links}
+                            isDarkMode={darkMode}
+                          />
                         )}
 
                       {/* 4. RECOMMENDATIONS SECTION - Show after typing is complete */}
