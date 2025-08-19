@@ -127,13 +127,13 @@ export const processContent = (content: string, isDarkMode: boolean = false): Pr
               {children}
             </a>
           ),
-          // Custom image component
+          // Custom image component with error handling
           img: ({ src, alt, ...props }) => (
-            <img
-              src={src}
+            <ImageWithFallback
+              src={src || ''}
               alt={alt || 'Image'}
-              className="max-w-full h-auto rounded-lg border border-gray-200 shadow-sm my-2"
-              loading="lazy"
+              isDarkMode={isDarkMode}
+              className="my-2"
               {...props}
             />
           ),
