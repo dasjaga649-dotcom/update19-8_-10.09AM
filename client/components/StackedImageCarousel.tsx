@@ -52,11 +52,11 @@ export const StackedImageCarousel = ({
   if (normalizedItems.length === 0) return null;
 
   const nextContent = () => {
-    setCurrentIndex((prev) => (prev + 1) % content.length);
+    setCurrentIndex((prev) => (prev + 1) % normalizedItems.length);
   };
 
   const prevContent = () => {
-    setCurrentIndex((prev) => (prev - 1 + content.length) % content.length);
+    setCurrentIndex((prev) => (prev - 1 + normalizedItems.length) % normalizedItems.length);
   };
 
   const handleImageClick = (index: number) => {
