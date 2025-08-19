@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface RelatedContent {
@@ -7,57 +7,106 @@ interface RelatedContent {
   url: string;
 }
 
+interface ImageContent {
+  url: string;
+  alt: string;
+}
+
+// Union type to support both formats
+type CarouselItem = RelatedContent | ImageContent;
+
 interface StackedImageCarouselProps {
-  content: RelatedContent[];
+  content?: RelatedContent[];
+  images?: ImageContent[];
   isDarkMode?: boolean;
 }
 
 export const StackedImageCarousel = ({
   content,
+  images,
   isDarkMode = false,
 }: StackedImageCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  if (content.length === 0) return null;
+  // Normalize data to work with both formats
+  const normalizedItems: Array<{ src: string; title: string; url?: string }> =
+    React.useMemo(() => {
+      if (images) {
+        return images.map((img) => ({
+          src: img.url,
+          title: img.alt || "Image",
+          url: undefined, // Images from markdown don't have clickable URLs
+        }));
+      }
+
+      if (content) {
+        return content.map((item) => ({
+          src: item.image,
+          title: item.title,
+          url: item.url,
+        }));
+      }
+
+      return [];
+    }, [content, images]);
+
+  if (normalizedItems.length === 0) return null;
 
   const nextContent = () => {
-    setCurrentIndex((prev) => (prev + 1) % content.length);
+    setCurrentIndex((prev) => (prev + 1) % normalizedItems.length);
   };
 
   const prevContent = () => {
-    setCurrentIndex((prev) => (prev - 1 + content.length) % content.length);
+    setCurrentIndex(
+      (prev) => (prev - 1 + normalizedItems.length) % normalizedItems.length,
+    );
   };
 
   const handleImageClick = (index: number) => {
     setCurrentIndex(index);
   };
 
-  if (content.length === 1) {
+  if (normalizedItems.length === 1) {
+    const item = normalizedItems[0];
+    const containerContent = (
+      <>
+        <img
+          src={
+            item.src ||
+            "https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
+          }
+          alt={item.title}
+          className="w-full h-32 object-cover bg-gray-100"
+        />
+        <div className="p-2 bg-transparent">
+          <h5
+            className={`font-medium text-xs line-clamp-2 text-center ${isDarkMode ? "text-white" : "text-gray-800"} ${item.url ? "hover:text-blue-600 cursor-pointer" : ""}`}
+          >
+            {item.title}
+          </h5>
+        </div>
+      </>
+    );
+
     return (
       <div className="mt-4 flex justify-center">
         <div className="max-w-xs p-4 rounded-lg">
-          <a
-            href={content[0].url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]`}
-          >
-            <img
-              src={
-                content[0].image ||
-                "https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
-              }
-              alt={content[0].title}
-              className="w-full h-32 object-cover bg-gray-100"
-            />
-            <div className="p-2 bg-transparent">
-              <h5
-                className={`font-medium text-xs hover:text-blue-600 cursor-pointer line-clamp-2 text-center ${isDarkMode ? "text-white" : "text-gray-800"}`}
-              >
-                {content[0].title}
-              </h5>
+          {item.url ? (
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]`}
+            >
+              {containerContent}
+            </a>
+          ) : (
+            <div
+              className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden shadow-md`}
+            >
+              {containerContent}
             </div>
-          </a>
+          )}
         </div>
       </div>
     );
@@ -68,11 +117,14 @@ export const StackedImageCarousel = ({
       <div className="relative w-full max-w-md p-4 rounded-lg">
         {/* Carousel container with centered layout */}
         <div className="relative h-48 flex items-center justify-center perspective-1000">
-          {content.map((item, index) => {
+          {normalizedItems.map((item, index) => {
             const isActive = index === currentIndex;
             const isPrev =
-              index === (currentIndex - 1 + content.length) % content.length;
-            const isNext = index === (currentIndex + 1) % content.length;
+              index ===
+              (currentIndex - 1 + normalizedItems.length) %
+                normalizedItems.length;
+            const isNext =
+              index === (currentIndex + 1) % normalizedItems.length;
 
             let transformStyle = "";
             let opacityValue = 0;
@@ -117,29 +169,51 @@ export const StackedImageCarousel = ({
                 }}
                 onClick={() => handleImageClick(index)}
               >
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 ${isActive ? "shadow-xl ring-2 ring-blue-400" : "shadow-md hover:shadow-lg"}`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <img
-                    src={
-                      item.image ||
-                      "https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
-                    }
-                    alt={item.title}
-                    className="w-full h-28 object-cover bg-gray-100"
-                  />
-                  <div className="p-2 bg-white/90 backdrop-blur-sm">
-                    <h5
-                      className={`font-medium text-xs hover:text-blue-600 cursor-pointer line-clamp-1 text-center ${isDarkMode ? "text-gray-800" : "text-gray-800"}`}
-                    >
-                      {item.title}
-                    </h5>
+                {item.url ? (
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 ${isActive ? "shadow-xl ring-2 ring-blue-400" : "shadow-md hover:shadow-lg"}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <img
+                      src={
+                        item.src ||
+                        "https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
+                      }
+                      alt={item.title}
+                      className="w-full h-28 object-cover bg-gray-100"
+                    />
+                    <div className="p-2 bg-white/90 backdrop-blur-sm">
+                      <h5
+                        className={`font-medium text-xs hover:text-blue-600 cursor-pointer line-clamp-1 text-center ${isDarkMode ? "text-gray-800" : "text-gray-800"}`}
+                      >
+                        {item.title}
+                      </h5>
+                    </div>
+                  </a>
+                ) : (
+                  <div
+                    className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden transition-all duration-300 ${isActive ? "shadow-xl ring-2 ring-blue-400" : "shadow-md"}`}
+                  >
+                    <img
+                      src={
+                        item.src ||
+                        "https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
+                      }
+                      alt={item.title}
+                      className="w-full h-28 object-cover bg-gray-100"
+                    />
+                    <div className="p-2 bg-white/90 backdrop-blur-sm">
+                      <h5
+                        className={`font-medium text-xs line-clamp-1 text-center ${isDarkMode ? "text-gray-800" : "text-gray-800"}`}
+                      >
+                        {item.title}
+                      </h5>
+                    </div>
                   </div>
-                </a>
+                )}
               </div>
             );
           })}
@@ -164,7 +238,7 @@ export const StackedImageCarousel = ({
 
         {/* Pagination dots */}
         <div className="flex justify-center gap-3 mt-3">
-          {content.map((_, index) => (
+          {normalizedItems.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
@@ -176,7 +250,6 @@ export const StackedImageCarousel = ({
             />
           ))}
         </div>
-
       </div>
     </div>
   );

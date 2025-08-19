@@ -18,7 +18,8 @@ import { StackedImageCarousel } from "../components/StackedImageCarousel";
 import { HorizontalScrollableCards } from "../components/HorizontalScrollableCards";
 import { AutoImageSlideshow } from "../components/AutoImageSlideshow";
 import { Recommendations } from "../components/Recommendations";
-import { parseMarkdownLinks, hasMarkdownLinks, hasBulletPoints } from "../lib/markdownUtils";
+import { TextProcessor, processContent } from "../components/TextProcessor";
+import { ModernFileLinks } from "../components/ModernFileLinks";
 
 // Type definitions for the backend response
 interface RelatedContent {
@@ -935,12 +936,24 @@ export default function Index() {
           '<a$1href="$2"$3 target="_blank" rel="noopener noreferrer">',
         )
         // Enhance headings with proper spacing
-        .replace(/<h([1-6])([^>]*?)>/gi, '<h$1$2 style="margin: 16px 0 8px 0; font-weight: bold;">')
+        .replace(
+          /<h([1-6])([^>]*?)>/gi,
+          '<h$1$2 style="margin: 16px 0 8px 0; font-weight: bold;">',
+        )
         // Enhance paragraphs with proper spacing
-        .replace(/<p([^>]*?)>/gi, '<p$1 style="margin: 8px 0; line-height: 1.6;">')
+        .replace(
+          /<p([^>]*?)>/gi,
+          '<p$1 style="margin: 8px 0; line-height: 1.6;">',
+        )
         // Enhance lists with proper spacing
-        .replace(/<ul([^>]*?)>/gi, '<ul$1 style="margin: 8px 0; padding-left: 20px;">')
-        .replace(/<ol([^>]*?)>/gi, '<ol$1 style="margin: 8px 0; padding-left: 20px;">')
+        .replace(
+          /<ul([^>]*?)>/gi,
+          '<ul$1 style="margin: 8px 0; padding-left: 20px;">',
+        )
+        .replace(
+          /<ol([^>]*?)>/gi,
+          '<ol$1 style="margin: 8px 0; padding-left: 20px;">',
+        )
         .replace(/<li([^>]*?)>/gi, '<li$1 style="margin: 4px 0;">');
 
       // Clean up link text in HTML content
@@ -1164,14 +1177,16 @@ export default function Index() {
       });
     } else {
       // First, split text by * ** pattern to create bullet points
-      const bulletSplitText = processedText.replace(/\s*\*\s*\*\*/g, '\n* **');
-      const lines = bulletSplitText.split(/\\n|\n/).filter((line) => line.trim());
+      const bulletSplitText = processedText.replace(/\s*\*\s*\*\*/g, "\n* **");
+      const lines = bulletSplitText
+        .split(/\\n|\n/)
+        .filter((line) => line.trim());
 
       lines.forEach((line, index) => {
         // Handle special bullet points: * **text**
         if (line.trim().match(/^\*\s*\*\*/)) {
           // Extract everything after * ** including the bold part and any text after
-          const content = line.trim().replace(/^\*\s*\*\*/, '');
+          const content = line.trim().replace(/^\*\s*\*\*/, "");
 
           // Process the content to handle bold formatting
           const processedContent = content
@@ -1633,7 +1648,7 @@ export default function Index() {
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div
-                  className={`${message.type === "user" ? "max-w-xs ml-auto" : "max-w-2xl mr-auto"} ${message.type === "user" ? "bg-gray-200 text-gray-800 rounded-2xl rounded-br-md p-4" : "bg-transparent text-gray-900 p-2"}`}
+                  className={`${message.type === "user" ? "max-w-xs ml-auto" : "max-w-lg mr-auto"} ${message.type === "user" ? "bg-gray-200 text-gray-800 rounded-2xl rounded-br-md p-4" : "bg-transparent text-gray-900 p-2"}`}
                 >
                   {message.type === "user" ? (
                     <p className="text-sm">{message.content}</p>
@@ -1656,92 +1671,35 @@ export default function Index() {
                             );
                           }
 
-                          // Show complete message
+                          // Show complete message using TextProcessor
                           const answer = message.response?.answer || "";
+                          const processed = processContent(answer, darkMode);
 
-                          // Check if answer contains HTML tags
-                          const hasHTMLTags = /<[^>]+>/.test(answer);
-
-                          if (hasHTMLTags) {
-                            // Render HTML content safely
-                            return (
+                          return (
+                            <div className="space-y-4">
+                              {/* Display main content using TextProcessor */}
                               <div className="max-w-full break-words">
-                                {renderHTMLContent(answer, darkMode)}
+                                <TextProcessor
+                                  content={answer}
+                                  isDarkMode={darkMode}
+                                  className="prose-sm leading-relaxed"
+                                />
                               </div>
-                            );
-                          } else {
-                            // Check if answer contains bullet points first
-                            const hasBulletPointsInAnswer = hasBulletPoints(answer);
-                            const hasMarkdownLinksinAnswer =
-                              hasMarkdownLinks(answer);
 
-                            if (hasBulletPointsInAnswer) {
-                              // Process as text with bullet points
-                              const formatted = formatAnswerText(answer, darkMode);
-                              return (
-                                <div>
-                                  <div className={`prose-sm leading-relaxed max-w-full break-words ${
-                                    darkMode ? "text-gray-100" : "text-gray-900"
-                                  }`}>
-                                    {formatted.formattedText}
-                                  </div>
-                                  {/* Display slideshow for extracted images - always show if available */}
-                                  {(showImages[message.id] ||
-                                    (typingMessageId !== message.id &&
-                                      typingMessageId !== null) ||
-                                    typingMessageId === null) &&
-                                    formatted.slideshowImages &&
-                                    formatted.slideshowImages.length > 0 && (
-                                    <AutoImageSlideshow images={formatted.slideshowImages} />
-                                  )}
-                                </div>
-                              );
-                            } else if (hasMarkdownLinksinAnswer) {
-                              // Parse and render markdown links
-                              const parsedContent = parseMarkdownLinks(answer);
-                              return (
-                                <div
-                                  className={`prose-sm leading-relaxed max-w-full break-words ${
-                                    darkMode ? "text-gray-100" : "text-gray-900"
-                                  }`}
-                                >
-                                  {parsedContent.map((part, index) => (
-                                    <span key={index}>{part}</span>
-                                  ))}
-                                </div>
-                              );
-                            } else {
-                              // Process as regular markdown/plain text
-                              const formatted = formatAnswerText(
-                                answer,
-                                darkMode,
-                              );
-                              return (
-                                <div>
-                                  <div
-                                    className={`prose-sm leading-relaxed max-w-full break-words ${
-                                      darkMode
-                                        ? "text-gray-100"
-                                        : "text-gray-900"
-                                    }`}
-                                  >
-                                    {formatted.formattedText}
-                                  </div>
-                                  {/* Display slideshow for extracted images - always show if available */}
-                                  {(showImages[message.id] ||
-                                    (typingMessageId !== message.id &&
-                                      typingMessageId !== null) ||
-                                    typingMessageId === null) &&
-                                    formatted.slideshowImages &&
-                                    formatted.slideshowImages.length > 0 && (
-                                      <AutoImageSlideshow
-                                        images={formatted.slideshowImages}
-                                      />
-                                    )}
-                                </div>
-                              );
-                            }
-                          }
+                              {/* Display slideshow for extracted images - always show if available */}
+                              {(showImages[message.id] ||
+                                (typingMessageId !== message.id &&
+                                  typingMessageId !== null) ||
+                                typingMessageId === null) &&
+                                processed.extractedImages &&
+                                processed.extractedImages.length > 0 && (
+                                  <StackedImageCarousel
+                                    images={processed.extractedImages}
+                                    isDarkMode={darkMode}
+                                  />
+                                )}
+                            </div>
+                          );
                         })()}
                       </div>
 
@@ -1758,58 +1716,17 @@ export default function Index() {
                           />
                         )}
 
-                      {/* 3. FILE LINKS SECTION - Small vertical cards */}
+                      {/* 3. FILE LINKS SECTION - Modern download cards */}
                       {(showImages[message.id] ||
                         (typingMessageId !== message.id &&
                           typingMessageId !== null) ||
                         typingMessageId === null) &&
                         message.response?.file_links &&
                         message.response.file_links.length > 0 && (
-                          <div className="mt-4 max-h-40 overflow-y-auto scrollbar-hide">
-                            <div className="space-y-2">
-                              {message.response.file_links
-                                .filter(
-                                  (link) =>
-                                    link &&
-                                    (typeof link === "string" ||
-                                      (typeof link === "object" && link.url)),
-                                )
-                                .map((link, index) => {
-                                  // Handle both old format (string) and new format (object with title and url)
-                                  const href =
-                                    typeof link === "string" ? link : link.url;
-                                  const title =
-                                    typeof link === "string"
-                                      ? link.split("/").pop() ||
-                                        `File ${index + 1}`
-                                      : link.title;
-
-                                  return (
-                                    <a
-                                      key={index}
-                                      href={href}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className={`block p-3 rounded-lg border transition-all duration-200 hover:shadow-md cursor-pointer ${
-                                        darkMode
-                                          ? "bg-gray-800 border-gray-600 hover:border-gray-500 hover:bg-gray-700"
-                                          : "bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
-                                      }`}
-                                    >
-                                      <span
-                                        className={`text-sm font-medium ${
-                                          darkMode
-                                            ? "text-gray-200 hover:text-blue-400"
-                                            : "text-gray-700 hover:text-blue-600"
-                                        }`}
-                                      >
-                                        {title}
-                                      </span>
-                                    </a>
-                                  );
-                                })}
-                            </div>
-                          </div>
+                          <ModernFileLinks
+                            fileLinks={message.response.file_links}
+                            isDarkMode={darkMode}
+                          />
                         )}
 
                       {/* 4. RECOMMENDATIONS SECTION - Show after typing is complete */}
