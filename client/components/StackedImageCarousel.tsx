@@ -29,25 +29,26 @@ export const StackedImageCarousel = ({
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Normalize data to work with both formats
-  const normalizedItems: Array<{src: string, title: string, url?: string}> = React.useMemo(() => {
-    if (images) {
-      return images.map(img => ({
-        src: img.url,
-        title: img.alt || 'Image',
-        url: undefined // Images from markdown don't have clickable URLs
-      }));
-    }
+  const normalizedItems: Array<{ src: string; title: string; url?: string }> =
+    React.useMemo(() => {
+      if (images) {
+        return images.map((img) => ({
+          src: img.url,
+          title: img.alt || "Image",
+          url: undefined, // Images from markdown don't have clickable URLs
+        }));
+      }
 
-    if (content) {
-      return content.map(item => ({
-        src: item.image,
-        title: item.title,
-        url: item.url
-      }));
-    }
+      if (content) {
+        return content.map((item) => ({
+          src: item.image,
+          title: item.title,
+          url: item.url,
+        }));
+      }
 
-    return [];
-  }, [content, images]);
+      return [];
+    }, [content, images]);
 
   if (normalizedItems.length === 0) return null;
 
@@ -56,7 +57,9 @@ export const StackedImageCarousel = ({
   };
 
   const prevContent = () => {
-    setCurrentIndex((prev) => (prev - 1 + normalizedItems.length) % normalizedItems.length);
+    setCurrentIndex(
+      (prev) => (prev - 1 + normalizedItems.length) % normalizedItems.length,
+    );
   };
 
   const handleImageClick = (index: number) => {
@@ -68,7 +71,10 @@ export const StackedImageCarousel = ({
     const containerContent = (
       <>
         <img
-          src={item.src || "https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"}
+          src={
+            item.src ||
+            "https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
+          }
           alt={item.title}
           className="w-full h-32 object-cover bg-gray-100"
         />
@@ -95,7 +101,9 @@ export const StackedImageCarousel = ({
               {containerContent}
             </a>
           ) : (
-            <div className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden shadow-md`}>
+            <div
+              className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden shadow-md`}
+            >
               {containerContent}
             </div>
           )}
@@ -112,8 +120,11 @@ export const StackedImageCarousel = ({
           {normalizedItems.map((item, index) => {
             const isActive = index === currentIndex;
             const isPrev =
-              index === (currentIndex - 1 + normalizedItems.length) % normalizedItems.length;
-            const isNext = index === (currentIndex + 1) % normalizedItems.length;
+              index ===
+              (currentIndex - 1 + normalizedItems.length) %
+                normalizedItems.length;
+            const isNext =
+              index === (currentIndex + 1) % normalizedItems.length;
 
             let transformStyle = "";
             let opacityValue = 0;
@@ -239,7 +250,6 @@ export const StackedImageCarousel = ({
             />
           ))}
         </div>
-
       </div>
     </div>
   );

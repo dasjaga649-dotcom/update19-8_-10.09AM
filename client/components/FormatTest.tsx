@@ -1,11 +1,13 @@
-import React from 'react';
-import { TextProcessor } from './TextProcessor';
+import React from "react";
+import { TextProcessor } from "./TextProcessor";
 
 interface FormatTestProps {
   isDarkMode?: boolean;
 }
 
-export const FormatTest: React.FC<FormatTestProps> = ({ isDarkMode = false }) => {
+export const FormatTest: React.FC<FormatTestProps> = ({
+  isDarkMode = false,
+}) => {
   const testContent = `**Testing Markdown and HTML Support**
 
 Here are some test patterns:
@@ -38,17 +40,21 @@ Here are some test patterns:
 </ul>`;
 
   return (
-    <div className={`p-4 rounded-lg border ${
-      isDarkMode 
-        ? 'bg-gray-800 border-gray-600' 
-        : 'bg-gray-50 border-gray-200'
-    }`}>
-      <h3 className={`text-lg font-semibold mb-3 ${
-        isDarkMode ? 'text-white' : 'text-gray-900'
-      }`}>
+    <div
+      className={`p-4 rounded-lg border ${
+        isDarkMode
+          ? "bg-gray-800 border-gray-600"
+          : "bg-gray-50 border-gray-200"
+      }`}
+    >
+      <h3
+        className={`text-lg font-semibold mb-3 ${
+          isDarkMode ? "text-white" : "text-gray-900"
+        }`}
+      >
         Format Test Results
       </h3>
-      <TextProcessor 
+      <TextProcessor
         content={testContent}
         isDarkMode={isDarkMode}
         className="text-sm"
