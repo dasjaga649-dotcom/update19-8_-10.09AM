@@ -63,32 +63,42 @@ export const StackedImageCarousel = ({
     setCurrentIndex(index);
   };
 
-  if (content.length === 1) {
+  if (normalizedItems.length === 1) {
+    const item = normalizedItems[0];
+    const containerContent = (
+      <>
+        <img
+          src={item.src || "https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"}
+          alt={item.title}
+          className="w-full h-32 object-cover bg-gray-100"
+        />
+        <div className="p-2 bg-transparent">
+          <h5
+            className={`font-medium text-xs line-clamp-2 text-center ${isDarkMode ? "text-white" : "text-gray-800"} ${item.url ? "hover:text-blue-600 cursor-pointer" : ""}`}
+          >
+            {item.title}
+          </h5>
+        </div>
+      </>
+    );
+
     return (
       <div className="mt-4 flex justify-center">
         <div className="max-w-xs p-4 rounded-lg">
-          <a
-            href={content[0].url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]`}
-          >
-            <img
-              src={
-                content[0].image ||
-                "https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
-              }
-              alt={content[0].title}
-              className="w-full h-32 object-cover bg-gray-100"
-            />
-            <div className="p-2 bg-transparent">
-              <h5
-                className={`font-medium text-xs hover:text-blue-600 cursor-pointer line-clamp-2 text-center ${isDarkMode ? "text-white" : "text-gray-800"}`}
-              >
-                {content[0].title}
-              </h5>
+          {item.url ? (
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]`}
+            >
+              {containerContent}
+            </a>
+          ) : (
+            <div className={`block ${isDarkMode ? "border-gray-600" : "border-gray-200"} border rounded-xl overflow-hidden shadow-md`}>
+              {containerContent}
             </div>
-          </a>
+          )}
         </div>
       </div>
     );
